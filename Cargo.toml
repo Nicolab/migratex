@@ -1,0 +1,36 @@
+[package]
+name = "migratex"
+version = "0.1.0"
+edition = "2024"
+authors = ["Nicolas talle <dev@nicolab.net>"]
+license = "MIT"
+repository = "https://github.com/nicolab/migratex"
+categories = ["development-tools", "database", "data-structures", "web-programming", "rust-patterns"]
+keywords = ["migration", "migrations", "migrate", "database", "versioning"]
+description = "Agnostic migration toolkit library."
+documentation = "https://docs.rs/migratex"
+
+[dependencies]
+anyhow = "1.0.100"
+async-trait = "0.1.89"
+chrono = "0.4.42"
+# Used/compiled only whith json feature
+serde = { version = "1.0.228", features = ["derive"], optional = true }
+serde_json = {version = "1.0.145", optional = true}
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite", "macros"]}
+
+[features]
+default = []
+json = ["serde", "serde_json"]
+# sqlx-example = ["sqlx"]
+
+[[example]]
+name = "custom_store"
+required-features = ["json"]
+
+[[example]]
+name = "json_store"
+required-features = ["json"]
