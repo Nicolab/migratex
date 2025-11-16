@@ -15,7 +15,7 @@
 //! ## Links
 //!
 //!  - [https://github.com/nicolab/migratex](https://github.com/nicolab/migratex)
-//!  - [Examples](https://github.com/nicolab/migratex/tree/master/examples)
+//!  - [Examples](https://github.com/nicolab/migratex/tree/main/examples)
 
 mod helpers;
 mod metadata;

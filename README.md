@@ -2,7 +2,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/migratex.svg)](https://crates.io/crates/migratex)
 [![Docs.rs](https://docs.rs/migratex/badge.svg)](https://docs.rs/migratex)
-[![License](https://img.shields.io/crates/l/migratex.svg)](https://github.com/nicolab/migratex/blob/master/LICENSE)
+[![License](https://img.shields.io/crates/l/migratex.svg)](https://github.com/nicolab/migratex/blob/main/LICENSE)
 
 **Migratex** is an agnostic migration toolkit library.
 
@@ -20,7 +20,11 @@
 
 Simple and intuitive API: migrate_up, migrate_down, migrate_to, migrate_to_latest, migrate_to_zero, latest_version, metadata, etc.
 
-Look at the [examples](https://github.com/nicolab/migratex/tree/master/examples).
+Look at the [examples](https://github.com/nicolab/migratex/tree/main/examples):
+
+- [json_store example](https://github.com/nicolab/migratex/tree/main/examples/json_store)
+- [custom_store example](https://github.com/nicolab/migratex/tree/main/examples/custom_store)
+- [sqlx example](https://github.com/nicolab/migratex/tree/main/examples/sqlx)
 
 ## Usage
 
@@ -33,7 +37,7 @@ migratex = "*"
 
 > Put the latest version of `migratex` in your `Cargo.toml`!
 
-Look at the [examples](https://github.com/nicolab/migratex/tree/master/examples).
+Look at the [examples](https://github.com/nicolab/migratex/tree/main/examples).
 
 ### Features
 
@@ -60,7 +64,7 @@ cargo test  --tests --features json
 
 ## LICENSE
 
-[MIT](https://github.com/nicolab/migratex/blob/master/LICENSE) (c) 2025, Nicolas Talle.
+[MIT](https://github.com/nicolab/migratex/blob/main/LICENSE) (c) 2025, Nicolas Talle.
 
 ## Author
 
