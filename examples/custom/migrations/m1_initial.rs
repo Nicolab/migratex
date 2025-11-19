@@ -1,5 +1,5 @@
-use anyhow::Result;
 use async_trait::async_trait;
+use okerr::Result;
 
 use crate::context::MigContext;
 use migratex::Migration;

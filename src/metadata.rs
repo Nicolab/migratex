@@ -5,14 +5,8 @@
 // information and documentation: https://github.com/nicolab/migratex
 // -----------------------------------------------------------------------------
 
-use std::path::Path;
-
-use anyhow::Result;
-
 #[cfg(feature = "json")]
 use serde;
-
-use crate::init_meta_datetimes_if_empty;
 
 /// The status of a migration.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -31,7 +25,7 @@ impl Default for MetaStatus {
 
 pub trait Metadata {
     //
-    // ─── CORE: champs logiques ───────────────────────────────────────────────
+    // -- CORE: logical fields
     //
 
     /// Migration version.
@@ -55,30 +49,17 @@ pub trait Metadata {
     fn updated_at(&self) -> &str;
     fn updated_at_mut(&mut self) -> &mut String;
 
-    /// Load metadata if it exists, else initialize it.
-    fn load_or_init(path: impl AsRef<Path>) -> Result<Self>
-    where
-        Self: Sized;
-
-    /// Save current metadata.
-    fn save(&self, path: impl AsRef<Path>) -> Result<()>;
-
     //
-    // ─── Helpers (overridable if needed) ───────────────────────
+    // -- Helpers (with default implementations)
     //
 
-    /// Create and save a new metadata with default values.
-    fn new_with_path(path: impl AsRef<Path>) -> Result<Self>
-    where
-        Self: Default,
-    {
-        let mut meta = Self::default();
-        meta.set_version(0);
-        meta.set_status(MetaStatus::Clean);
-        meta.set_app_version(env!("CARGO_PKG_VERSION").to_string());
-        init_meta_datetimes_if_empty(&mut meta);
-        meta.save(path)?;
-        Ok(meta)
+    /// Get the status as a string.
+    fn to_status_str(&self) -> &str {
+        match self.status() {
+            MetaStatus::Clean => "Clean",
+            MetaStatus::Migrating => "Migrating",
+            MetaStatus::Failed => "Failed",
+        }
     }
 
     /// Update `updated_at` with current time.

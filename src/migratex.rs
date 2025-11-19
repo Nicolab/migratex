@@ -5,7 +5,7 @@
 // information and documentation: https://github.com/nicolab/migratex
 // -----------------------------------------------------------------------------
 
-use anyhow::Result;
+use okerr::Result;
 
 use crate::BoxMigration;
 use crate::Metadata;

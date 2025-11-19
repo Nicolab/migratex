@@ -2,11 +2,11 @@ mod context;
 mod metadata;
 mod migrations;
 
-use anyhow::Result;
-use migratex::{Metadata, Migratex};
+use migratex::Migratex;
+use okerr::Result;
 
 use context::MigContext;
-use metadata::AppMetadata;
+use metadata::CustomMetadata;
 use migrations::migrations;
 
 #[tokio::main]
@@ -20,7 +20,7 @@ async fn main() -> Result<()> {
     };
 
     // Load or init metadata file
-    let mut meta = AppMetadata::load_or_init(file_path)?;
+    let mut meta = CustomMetadata::load_or_init(file_path)?;
 
     println!("Initial context: {:?}\n", &ctx);
     println!("Initial metadata: {:?}\n", meta);

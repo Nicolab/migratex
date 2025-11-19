@@ -5,10 +5,11 @@
 // information and documentation: https://github.com/nicolab/migratex
 // -----------------------------------------------------------------------------
 
-use anyhow::Result;
+use okerr::Result;
 
 use crate::Metadata;
 
+/// Calls `init_meta_datetimes_if_empty` and returns `Ok(meta)`.
 pub fn meta_loaded<M: Metadata>(mut meta: M) -> Result<M> {
     init_meta_datetimes_if_empty(&mut meta);
     Ok(meta)

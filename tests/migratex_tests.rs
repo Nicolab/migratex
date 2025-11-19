@@ -11,7 +11,7 @@
 
 mod common;
 
-use anyhow::Result;
+use okerr::Result;
 use common::{TempDir, TestContext, TestMetadata, create_test_migrations};
 use migratex::{MetaStatus, Metadata, Migratex};
 

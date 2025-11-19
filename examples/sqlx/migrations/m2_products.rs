@@ -1,5 +1,5 @@
-use anyhow::Result;
 use async_trait::async_trait;
+use okerr::Result;
 
 use crate::context::MigContext;
 use migratex::Migration;
@@ -20,7 +20,7 @@ impl Migration<MigContext> for M2Products {
         );
 
         // Use a transaction to ensure atomicity
-        let mut tx = ctx.pool.begin().await?;
+        let mut tx = ctx.db.begin().await?;
 
         // Create products table
         sqlx::query(
@@ -48,7 +48,7 @@ impl Migration<MigContext> for M2Products {
         );
 
         // Use a transaction to ensure atomicity
-        let mut tx = ctx.pool.begin().await?;
+        let mut tx = ctx.db.begin().await?;
 
         sqlx::query("DROP TABLE IF EXISTS products")
             .execute(&mut *tx)

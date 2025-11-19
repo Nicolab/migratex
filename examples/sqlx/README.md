@@ -6,32 +6,55 @@ This example demonstrates how to use Migratex with SQLx and SQLite, storing migr
 
 This example shows:
 
-- **SqlxStore**: Custom metadata storage using SQLite database tables
-- **DbPath wrapper**: Advanced pattern to pass both path and connection pool
+- **SqliteMetadata**: Ready-to-use SQLite database metadata storage
+- **SqliteStorage**: Storage configuration for metadata
+- **connect_to_sqlite()**: Helper function to connect to SQLite database (optional)
 - **Database migrations**: Creating and managing tables with SQLx
 - **Efficient connection reuse**: Single connection pool for both metadata and migrations
 
 ## Key Components
 
-### DbPath Wrapper
+### SqliteStorage
 
-The `DbPath` type is a clever wrapper that:
-
-- Implements `AsRef<Path>` for compatibility with `MetadataStore` trait
-- Optionally holds a `SqlitePool` for connection reuse
-- Allows efficient resource management
+The `SqliteStorage` struct provides metadata storage configuration:
 
 ```rust
-let db_path = DbPath::with_pool("app.db", pool.clone());
+use migratex::{SqliteStorage, connect_to_sqlite};
+use std::sync::Arc;
+use std::path::PathBuf;
+
+// Connect to database
+let pool = connect_to_sqlite(PathBuf::from("app.db")).await?;
+
+// Create storage with default table name
+let storage = SqliteStorage::new(Arc::new(pool));
+
+// Or with custom table name
+let storage = SqliteStorage::new(Arc::new(pool))
+    .with_table_name("_migratex_metadata");
 ```
 
-### SqlxStore
+### SqliteMetadata
 
-Custom implementation of `MetadataStore` that:
+Ready-to-use metadata storage that:
 
-- Stores metadata in a `_migratex_metadata` table
-- Supports both pooled and temporary connections
+- Stores metadata in a `_migratex_metadata` table (configurable)
+- Supports both pooled connections
 - Uses UPSERT for atomic metadata updates
+
+```rust
+use migratex::{SqliteMetadata, Migratex};
+
+// Load or initialize metadata
+let mut meta = SqliteMetadata::load_or_init(&storage).await?;
+
+// Run migrations
+let mut mx = Migratex::new(&mut ctx, &mut meta, migrations);
+mx.migrate_to_latest().await?;
+
+// Save metadata
+meta.save(&storage).await?;
+```
 
 ### Migrations
 
@@ -90,7 +113,7 @@ CREATE TABLE products (
 
 ```bash
 # Run from the migratex directory
-cargo run --example sqlx
+cargo run --example sqlx --features sqlx
 ```
 
 ## Inspecting the Database
@@ -117,44 +140,43 @@ PRAGMA foreign_keys;
 
 ## How It Works
 
-1. **Initialize**: Create SQLite connection pool
-2. **Load Metadata**: SqlxStore checks `_migratex_metadata` table or creates it
-3. **Run Migrations**: Migratex executes pending migrations using the pool
-4. **Save Metadata**: Updated metadata is stored back to the database
-5. **Cleanup**: Connection pool is dropped automatically
+1. **Initialize**: Create SQLite connection pool using `connect_to_sqlite()`
+2. **Create Storage**: Create `SqliteStorage` with the pool
+3. **Load Metadata**: `SqliteMetadata::load_or_init()` checks `_migratex_metadata` table or creates it
+4. **Run Migrations**: Migratex executes pending migrations using the pool
+5. **Save Metadata**: Updated metadata is stored back to the database
+6. **Cleanup**: Connection pool is dropped automatically
 
-## Advanced Pattern: DbPath
+## Migration Context
 
-The DbPath wrapper demonstrates an advanced Rust pattern:
+The migration context contains the database connection pool:
 
 ```rust
-pub struct DbPath {
-    path: String,
-    pool: Option<Arc<SqlitePool>>,
-}
-
-impl AsRef<Path> for DbPath {
-    fn as_ref(&self) -> &Path {
-        Path::new(&self.path)
-    }
+pub struct MigContext {
+    pub db: Arc<SqlitePool>,
 }
 ```
 
-This allows:
-
-- Type-safe path conversion
-- Optional connection pool injection
-- Compatibility with trait-based APIs
-- Zero-cost abstraction
+This allows migrations to access the database for creating tables and executing SQL queries.
 
 ## Notes
 
-- The example uses SQLite, but the pattern works with any SQLx-supported database
+- The example uses SQLite, but the pattern can be adapted for other databases
 - Foreign key constraints are enforced (see migrations order in `down()`)
 - Metadata table uses `CHECK (id = 1)` to ensure single-row constraint
 - Connection pools are wrapped in `Arc<>` for efficient cloning
+- `connect_to_sqlite()` automatically configures WAL mode and foreign keys
+
+## Features
+
+Enable the `sqlx` feature to use SQLite metadata storage:
+
+```toml
+[dependencies]
+migratex = { version = "*", features = ["sqlx"] }
+```
 
 ## See Also
 
-- [json_store example](../json_store/) - File-based metadata storage
-- [custom_store example](../custom_store/) - Custom metadata implementation
+- [json example](../json/) - JSON file-based metadata storage
+- [custom example](../custom/) - Custom metadata implementation

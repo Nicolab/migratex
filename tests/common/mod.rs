@@ -7,37 +7,14 @@
 
 // -- Common test utilities and helpers for Migratex tests.
 
-use anyhow::Result;
 use async_trait::async_trait;
-use migratex::{MetaStatus, Metadata, Migration};
+use migratex::Migration;
+use okerr::Result;
 use std::path::{Path, PathBuf};
 
+/// Test metadata - using JsonMetadata directly
 #[cfg(feature = "json")]
-use migratex::MetadataStore;
-
-/// Test metadata structure
-#[cfg(feature = "json")]
-#[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize)]
-pub struct TestMetadata {
-    pub version: i32,
-    pub status: MetaStatus,
-    pub app_version: String,
-    pub created_at: String,
-    pub updated_at: String,
-}
-
-#[cfg(feature = "json")]
-impl Metadata for TestMetadata {
-    migratex::metadata_accessors!();
-
-    fn load_or_init(path: impl AsRef<Path>) -> Result<Self> {
-        migratex::JsonStore::load_or_init(path)
-    }
-
-    fn save(&self, path: impl AsRef<Path>) -> Result<()> {
-        migratex::JsonStore::save(self, path)
-    }
-}
+pub type TestMetadata = migratex::JsonMetadata;
 
 /// Test migration context that tracks applied migrations
 #[derive(Debug, Default, Clone)]
@@ -99,7 +76,7 @@ impl Migration<TestContext> for TestMigration {
 
     async fn up(&self, ctx: &mut TestContext) -> Result<()> {
         if ctx.should_fail_at_version == Some(self.version) {
-            anyhow::bail!("Intentional failure at version {}", self.version);
+            okerr::fail!("Intentional failure at version {}", self.version);
         }
         ctx.record_up(self.version);
         Ok(())
@@ -107,7 +84,7 @@ impl Migration<TestContext> for TestMigration {
 
     async fn down(&self, ctx: &mut TestContext) -> Result<()> {
         if ctx.should_fail_at_version == Some(self.version) {
-            anyhow::bail!("Intentional failure at version {}", self.version);
+            okerr::fail!("Intentional failure at version {}", self.version);
         }
         ctx.record_down(self.version);
         Ok(())

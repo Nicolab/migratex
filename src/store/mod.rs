@@ -6,11 +6,13 @@
 // -----------------------------------------------------------------------------
 
 #[cfg(feature = "json")]
-mod json_store;
+mod json_metadata;
 
-mod metadata_store;
+#[cfg(feature = "sqlx")]
+mod sqlite_metadata;
 
 #[cfg(feature = "json")]
-pub use json_store::*;
+pub use json_metadata::*;
 
-pub use metadata_store::*;
+#[cfg(feature = "sqlx")]
+pub use sqlite_metadata::*;

@@ -1,16 +1,12 @@
 mod context;
-mod db_path;
-mod metadata;
 mod migrations;
-mod sqlx_store;
 
-use anyhow::Result;
-use migratex::{Metadata, Migratex};
-use sqlx::SqlitePool;
+use std::sync::Arc;
+
+use migratex::{Metadata, Migratex, SqliteMetadata, SqliteStorage, connect_to_sqlite};
+use okerr::Result;
 
 use context::MigContext;
-use db_path::DbPath;
-use metadata::AppMetadata;
 use migrations::migrations;
 
 #[tokio::main]
@@ -20,18 +16,14 @@ async fn main() -> Result<()> {
     println!("=== Migratex SQLx Example ===\n");
     println!("Database file: {}\n", db_file);
 
-    // Create SQLite connection pool (create file if it doesn't exist)
-    let pool = SqlitePool::connect(&format!("sqlite:{}?mode=rwc", db_file)).await?;
-    println!("✓ Connected to database\n");
+    // Connect to SQLite database
+    let pool = connect_to_sqlite(db_file.into()).await?;
+    let storage = SqliteStorage::new(Arc::new(pool.clone()));
 
-    // Create migration context with the connection pool
-    let mut ctx = MigContext::new(pool.clone());
+    println!("✓ Connected to database {}\n", db_file);
 
-    // Create DbPath wrapper that includes both path and pool
-    let db_path = DbPath::with_pool(db_file, pool.clone());
-
-    // Load or initialize metadata using SqlxStore
-    let mut meta = AppMetadata::load_or_init(&db_path)?;
+    // Load or initialize metadata using SqliteMetadata
+    let mut meta = SqliteMetadata::load_or_init(&storage).await?;
 
     println!("Initial metadata:");
     println!("  Version: {}", meta.version());
@@ -39,6 +31,9 @@ async fn main() -> Result<()> {
     println!("  App version: {}", meta.app_version());
     println!("  Created at: {}", meta.created_at());
     println!("  Updated at: {}\n", meta.updated_at());
+
+    // Create migration context with the pool
+    let mut ctx = MigContext::new(storage.pool.clone());
 
     // Load migrations and create Migratex (migration manager)
     let migs = migrations();
@@ -57,7 +52,7 @@ async fn main() -> Result<()> {
     println!("  Updated at: {}\n", meta.updated_at());
 
     // Save metadata to database
-    meta.save(&db_path)?;
+    meta.save(&storage).await?;
     println!("✓ Metadata saved to database");
 
     println!("\n=== Migration Complete ===");

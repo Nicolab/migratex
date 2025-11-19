@@ -1,17 +1,15 @@
 mod context;
-mod metadata;
 mod migrations;
 
-use anyhow::Result;
-use migratex::{Metadata, Migratex};
+use migratex::{JsonMetadata, Migratex};
+use okerr::Result;
 
 use context::MigContext;
-use metadata::AppMetadata;
 use migrations::migrations;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let file_path = std::path::Path::new("metadata_json_store.json");
+    let file_path = std::path::PathBuf::from("metadata.json");
 
     // Create migration context
     let mut ctx = MigContext {
@@ -19,8 +17,8 @@ async fn main() -> Result<()> {
         bar: "bar from JsonStore example".to_string(),
     };
 
-    // Load or init metadata file using JsonStore
-    let mut meta = AppMetadata::load_or_init(file_path)?;
+    // Load or init metadata file using JsonMetadata
+    let mut meta = JsonMetadata::load_or_init(&file_path)?;
 
     println!("Initial context: {:?}\n", ctx);
     println!("Initial metadata: {:?}\n", meta);
@@ -36,7 +34,7 @@ async fn main() -> Result<()> {
     println!("Final metadata: {:?}\n", meta);
 
     // Save metadata file
-    meta.save(file_path)?;
+    meta.save(&file_path)?;
 
     println!("Final metadata saved to {:?}", file_path);
     println!("Done!");

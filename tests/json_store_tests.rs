@@ -11,7 +11,7 @@
 
 mod common;
 
-use anyhow::Result;
+use okerr::Result;
 use common::{TempDir, TestMetadata};
 use migratex::{MetaStatus, Metadata};
 use std::fs;

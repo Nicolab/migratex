@@ -1,5 +1,5 @@
-use anyhow::Result;
 use async_trait::async_trait;
+use okerr::Result;
 
 use crate::context::MigContext;
 use migratex::Migration;
@@ -20,7 +20,7 @@ impl Migration<MigContext> for M1Initial {
         );
 
         // Use a transaction to ensure atomicity
-        let mut tx = ctx.pool.begin().await?;
+        let mut tx = ctx.db.begin().await?;
 
         // Create users table
         sqlx::query(
@@ -60,7 +60,7 @@ impl Migration<MigContext> for M1Initial {
         );
 
         // Use a transaction to ensure atomicity
-        let mut tx = ctx.pool.begin().await?;
+        let mut tx = ctx.db.begin().await?;
 
         // Drop tables in reverse order due to foreign key constraints
         sqlx::query("DROP TABLE IF EXISTS subscriptions")
