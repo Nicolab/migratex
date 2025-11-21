@@ -5,6 +5,7 @@ use std::sync::Arc;
 
 use migratex::{Metadata, Migratex, SqliteMetadata, SqliteStorage, connect_to_sqlite};
 use okerr::Result;
+use sqlx::SqlitePool;
 
 use context::MigContext;
 use migrations::migrations;
@@ -13,17 +14,27 @@ use migrations::migrations;
 async fn main() -> Result<()> {
     let db_file = "app.db";
 
+    // Connect to SQLite database
+    let pool = connect_to_sqlite(db_file.into()).await?;
+    migrate(&pool, db_file).await?;
+
+    Ok(())
+}
+
+// Update DB (eventually: + filesystem migrations + other migrations here...)
+// Migrations up → latest
+async fn migrate(pool: &SqlitePool, db_file: &str) -> Result<()> {
     println!("=== Migratex SQLx Example ===\n");
     println!("Database file: {}\n", db_file);
 
-    // Connect to SQLite database
-    let pool = connect_to_sqlite(db_file.into()).await?;
     let storage = SqliteStorage::new(Arc::new(pool.clone()));
 
     println!("✓ Connected to database {}\n", db_file);
 
     // Load or initialize metadata using SqliteMetadata
     let mut meta = SqliteMetadata::load_or_init(&storage).await?;
+
+    let initial_version = meta.version();
 
     println!("Initial metadata:");
     println!("  Version: {}", meta.version());
@@ -43,6 +54,7 @@ async fn main() -> Result<()> {
 
     // Run migrations to latest version
     println!("Running migrations...\n");
+
     mx.migrate_to_latest().await?;
 
     println!("\nFinal metadata:");
@@ -53,11 +65,17 @@ async fn main() -> Result<()> {
 
     // Save metadata to database
     meta.save(&storage).await?;
-    println!("✓ Metadata saved to database");
 
     println!("\n=== Migration Complete ===");
-    println!("\nYou can now inspect the database:");
-    println!("  sqlite3 {}", db_file);
+
+    if meta.version() == initial_version {
+        println!("✓ Nothing to migrate");
+    } else {
+        println!("✓ Metadata saved to database");
+    }
+
+    println!("\nYou can inspect the database:");
+    println!(r#"  sqlite3 "{}""#, db_file);
     println!("  .tables");
     println!("  SELECT * FROM _migratex_metadata;");
     println!("  .schema users");

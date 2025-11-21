@@ -33,6 +33,7 @@ let mut meta = JsonMetadata::load_or_init("metadata.json")?;
 
 // Run migrations
 let mut mx = Migratex::new(&mut ctx, &mut meta, migrations);
+
 mx.migrate_to_latest().await?;
 
 // Save metadata
@@ -42,9 +43,10 @@ meta.save("metadata.json")?;
 ### With SQLite storage
 
 ```rust
-use migratex::{SqliteMetadata, SqliteStorage, connect_to_sqlite, Migratex};
 use std::sync::Arc;
 use std::path::PathBuf;
+
+use migratex::{SqliteMetadata, SqliteStorage, connect_to_sqlite, Migratex};
 
 // Connect to database
 let pool = connect_to_sqlite(PathBuf::from("app.db")).await?;
@@ -55,6 +57,7 @@ let mut meta = SqliteMetadata::load_or_init(&storage).await?;
 
 // Run migrations
 let mut mx = Migratex::new(&mut ctx, &mut meta, migrations);
+
 mx.migrate_to_latest().await?;
 
 // Save metadata

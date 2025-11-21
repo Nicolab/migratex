@@ -19,9 +19,10 @@ This example shows:
 The `SqliteStorage` struct provides metadata storage configuration:
 
 ```rust
-use migratex::{SqliteStorage, connect_to_sqlite};
 use std::sync::Arc;
 use std::path::PathBuf;
+
+use migratex::{SqliteStorage, connect_to_sqlite};
 
 // Connect to database
 let pool = connect_to_sqlite(PathBuf::from("app.db")).await?;

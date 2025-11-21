@@ -1,9 +1,10 @@
-use crate::MigContext;
-use migratex::BoxMigration;
-
 mod m1_initial;
 mod m2_something;
 // mod m3_other;
+
+use migratex::BoxMigration;
+
+use crate::MigContext;
 
 pub fn migrations() -> Vec<BoxMigration<MigContext>> {
     // IMPORTANT: sort by version (ascending)

@@ -1,8 +1,8 @@
 use async_trait::async_trait;
+use migratex::Migration;
 use okerr::Result;
 
 use crate::context::MigContext;
-use migratex::Migration;
 
 /// Initial migration: creates users and subscriptions tables.
 pub struct M1Initial;
@@ -24,23 +24,27 @@ impl Migration<MigContext> for M1Initial {
 
         // Create users table
         sqlx::query(
-            "CREATE TABLE IF NOT EXISTS users (
+            r#"
+            CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
                 email TEXT NOT NULL UNIQUE
-            )",
+            )
+            "#,
         )
         .execute(&mut *tx)
         .await?;
 
         // Create subscriptions table with foreign key to users
         sqlx::query(
-            "CREATE TABLE IF NOT EXISTS subscriptions (
+            r#"
+            CREATE TABLE IF NOT EXISTS subscriptions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
                 plan TEXT NOT NULL,
                 FOREIGN KEY (user_id) REFERENCES users(id)
-            )",
+            )
+            "#,
         )
         .execute(&mut *tx)
         .await?;

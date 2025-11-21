@@ -1,8 +1,8 @@
 use async_trait::async_trait;
+use migratex::Migration;
 use okerr::Result;
 
 use crate::context::MigContext;
-use migratex::Migration;
 
 /// Second migration: creates products table.
 pub struct M2Products;
@@ -24,11 +24,13 @@ impl Migration<MigContext> for M2Products {
 
         // Create products table
         sqlx::query(
-            "CREATE TABLE IF NOT EXISTS products (
+            r#"
+            CREATE TABLE IF NOT EXISTS products (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
                 price REAL NOT NULL
-            )",
+            )
+            "#,
         )
         .execute(&mut *tx)
         .await?;

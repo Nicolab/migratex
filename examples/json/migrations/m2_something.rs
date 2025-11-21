@@ -1,8 +1,8 @@
-use okerr::Result;
 use async_trait::async_trait;
+use migratex::Migration;
+use okerr::Result;
 
 use crate::context::MigContext;
-use migratex::Migration;
 
 pub struct M2Something;
 

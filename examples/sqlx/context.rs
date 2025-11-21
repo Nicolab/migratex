@@ -1,5 +1,6 @@
-use sqlx::SqlitePool;
 use std::sync::Arc;
+
+use sqlx::SqlitePool;
 
 /// Migration context that holds the database connection.
 /// This is passed to each migration and used to execute SQL queries.
