@@ -1,6 +1,6 @@
 [package]
 name = "migratex"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2024"
 authors = ["Nicolas talle <dev@nicolab.net>"]
 license = "MIT"
@@ -18,6 +18,8 @@ tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 # Used/compiled only whith json feature
 serde = { version = "1.0.228", features = ["derive"], optional = true }
 serde_json = {version = "1.0.145", optional = true}
+
+# Used/compiled only whith sqlx feature
 sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite", "macros"], optional = true}
 
 [dev-dependencies]

@@ -7,10 +7,11 @@
 
 // -- Common test utilities and helpers for Migratex tests.
 
+use std::path::{Path, PathBuf};
+
 use async_trait::async_trait;
 use migratex::Migration;
 use okerr::Result;
-use std::path::{Path, PathBuf};
 
 /// Test metadata - using JsonMetadata directly
 #[cfg(feature = "json")]

@@ -11,9 +11,10 @@
 
 mod common;
 
-use okerr::Result;
-use common::{TempDir, TestContext, TestMetadata, create_test_migrations};
 use migratex::{MetaStatus, Metadata, Migratex};
+use okerr::Result;
+
+use common::{TempDir, TestContext, TestMetadata, create_test_migrations};
 
 #[tokio::test]
 async fn test_migratex_new() -> Result<()> {

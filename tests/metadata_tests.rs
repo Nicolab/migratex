@@ -11,9 +11,10 @@
 
 mod common;
 
-use okerr::Result;
-use common::{TempDir, TestMetadata};
 use migratex::{MetaStatus, Metadata};
+use okerr::Result;
+
+use common::{TempDir, TestMetadata};
 
 #[test]
 fn test_metadata_default_values() -> Result<()> {

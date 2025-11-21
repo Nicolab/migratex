@@ -11,10 +11,12 @@
 
 mod common;
 
-use okerr::Result;
-use common::{TempDir, TestMetadata};
-use migratex::{MetaStatus, Metadata};
 use std::fs;
+
+use migratex::{MetaStatus, Metadata};
+use okerr::Result;
+
+use common::{TempDir, TestMetadata};
 
 #[test]
 fn test_json_store_init_creates_new_file() -> Result<()> {
