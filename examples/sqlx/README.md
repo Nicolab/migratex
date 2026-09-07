@@ -35,6 +35,8 @@ let storage = SqliteStorage::new(Arc::new(pool))
     .with_table_name("_migratex_metadata");
 ```
 
+The table name must be a plain SQL identifier (`[A-Za-z_][A-Za-z0-9_]*`), otherwise metadata operations fail before running any query. SQLite may still reject reserved names (keywords, sqlite_ prefix).
+
 ### SqliteMetadata
 
 Ready-to-use metadata storage that:

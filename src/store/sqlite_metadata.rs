@@ -9,7 +9,7 @@ use std::{path::PathBuf, sync::Arc};
 
 use okerr::{Context, Result, ensure};
 use sqlx::{
-    Row, SqlitePool,
+    AssertSqlSafe, Row, SqlitePool,
     sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions},
 };
 
@@ -80,9 +80,35 @@ impl SqliteStorage {
     }
 
     /// Set a custom table name for metadata storage.
+    ///
+    /// The name must be a plain SQL identifier (`[A-Za-z_][A-Za-z0-9_]*`),
+    /// otherwise every metadata operation returns an error before running any
+    /// query. Names that SQLite itself rejects (keywords, `sqlite_` prefix)
+    /// fail at query time with the SQLite error.
     pub fn with_table_name(mut self, name: impl Into<String>) -> Self {
         self.table_name = name.into();
         self
+    }
+
+    /// Return the table name after checking it is a plain SQL identifier.
+    ///
+    /// The table name is interpolated into SQL statements (it cannot be a bind
+    /// parameter), so it is restricted to `[A-Za-z_][A-Za-z0-9_]*` to rule out
+    /// any injection through `with_table_name`.
+    fn checked_table_name(&self) -> Result<&str> {
+        let name = self.table_name.as_str();
+        let mut chars = name.chars();
+        let valid = chars
+            .next()
+            .is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
+            && chars.all(|c| c.is_ascii_alphanumeric() || c == '_');
+
+        ensure!(
+            valid,
+            "invalid metadata table name {name:?}: expected [A-Za-z_][A-Za-z0-9_]*"
+        );
+
+        Ok(name)
     }
 }
 
@@ -154,8 +180,9 @@ impl SqliteMetadata {
     /// Save metadata to the database using UPSERT.
     pub async fn save(&self, storage: &SqliteStorage) -> Result<()> {
         Self::ensure_table(storage).await?;
+        let table_name = storage.checked_table_name()?;
 
-        sqlx::query(&format!(
+        sqlx::query(AssertSqlSafe(format!(
             "INSERT INTO {} (id, version, status, app_version, created_at, updated_at)
              VALUES (1, ?, ?, ?, ?, ?)
              ON CONFLICT(id) DO UPDATE SET
@@ -163,8 +190,8 @@ impl SqliteMetadata {
                 status = excluded.status,
                 app_version = excluded.app_version,
                 updated_at = excluded.updated_at",
-            storage.table_name
-        ))
+            table_name
+        )))
         .bind(self.version)
         .bind(self.to_status_str())
         .bind(&self.app_version)
@@ -178,7 +205,9 @@ impl SqliteMetadata {
 
     /// Ensure the metadata table exists.
     async fn ensure_table(storage: &SqliteStorage) -> Result<()> {
-        sqlx::query(&format!(
+        let table_name = storage.checked_table_name()?;
+
+        sqlx::query(AssertSqlSafe(format!(
             "CREATE TABLE IF NOT EXISTS {} (
                 id INTEGER PRIMARY KEY CHECK (id = 1),
                 version INTEGER NOT NULL DEFAULT 0,
@@ -187,8 +216,8 @@ impl SqliteMetadata {
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL
             )",
-            storage.table_name
-        ))
+            table_name
+        )))
         .execute(&*storage.pool)
         .await?;
 
@@ -197,11 +226,13 @@ impl SqliteMetadata {
 
     /// Load metadata from the database table.
     async fn load_from_db(storage: &SqliteStorage) -> Result<Option<Self>> {
-        let row = sqlx::query(&format!(
+        let table_name = storage.checked_table_name()?;
+
+        let row = sqlx::query(AssertSqlSafe(format!(
             "SELECT version, status, app_version, created_at, updated_at
              FROM {} WHERE id = 1",
-            storage.table_name
-        ))
+            table_name
+        )))
         .fetch_optional(&*storage.pool)
         .await?;
 

@@ -5,8 +5,8 @@
 // information and documentation: https://github.com/nicolab/migratex
 // -----------------------------------------------------------------------------
 
-use okerr::Result;
 use async_trait::async_trait;
+use okerr::Result;
 
 /// A migration is a version of a change in the data.
 /// It can be a database migration, a file migration, a binary migration, etc.

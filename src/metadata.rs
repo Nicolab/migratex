@@ -5,22 +5,14 @@
 // information and documentation: https://github.com/nicolab/migratex
 // -----------------------------------------------------------------------------
 
-#[cfg(feature = "json")]
-use serde;
-
 /// The status of a migration.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 pub enum MetaStatus {
+    #[default]
     Clean,
     Migrating,
     Failed,
-}
-
-impl Default for MetaStatus {
-    fn default() -> Self {
-        Self::Clean
-    }
 }
 
 pub trait Metadata {

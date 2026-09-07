@@ -15,6 +15,7 @@ use okerr::Result;
 
 /// Test metadata - using JsonMetadata directly
 #[cfg(feature = "json")]
+#[allow(dead_code)]
 pub type TestMetadata = migratex::JsonMetadata;
 
 /// Test migration context that tracks applied migrations
@@ -109,6 +110,7 @@ impl TempDir {
         &self.path
     }
 
+    #[allow(dead_code)]
     pub fn metadata_path(&self) -> PathBuf {
         self.path.join("metadata.json")
     }

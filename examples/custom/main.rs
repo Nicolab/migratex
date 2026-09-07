@@ -22,7 +22,7 @@ async fn main() -> Result<()> {
     // Load or init metadata file
     let mut meta = CustomMetadata::load_or_init(file_path)?;
 
-    println!("Initial context: {:?}\n", &ctx);
+    println!("Initial context: {:?}\n", ctx);
     println!("Initial metadata: {:?}\n", meta);
 
     // Load migrations and create Migratex (migrator / migration manager)
