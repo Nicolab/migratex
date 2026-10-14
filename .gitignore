@@ -2,7 +2,6 @@
 .env
 .env.*
 !.env.example
-.kilocodeignore
 .DS_Store
 Thumbs.db
 
