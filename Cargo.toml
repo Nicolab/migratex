@@ -1,6 +1,6 @@
 [package]
 name = "migratex"
-version = "0.3.0"
+version = "1.0.0"
 edition = "2024"
 authors = ["Nicolas talle <dev@nicolab.net>"]
 license = "MIT"
