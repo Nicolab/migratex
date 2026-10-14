@@ -15,6 +15,8 @@ use sqlx::{
 
 use crate::{MetaStatus, Metadata, init_meta_datetimes_if_empty, meta_loaded};
 
+use super::sql_identifier::checked_table_name;
+
 /// Connect to SQLite database.
 #[cfg(feature = "sqlx")]
 pub async fn connect_to_sqlite(db_path: PathBuf) -> Result<SqlitePool> {
@@ -91,24 +93,8 @@ impl SqliteStorage {
     }
 
     /// Return the table name after checking it is a plain SQL identifier.
-    ///
-    /// The table name is interpolated into SQL statements (it cannot be a bind
-    /// parameter), so it is restricted to `[A-Za-z_][A-Za-z0-9_]*` to rule out
-    /// any injection through `with_table_name`.
     fn checked_table_name(&self) -> Result<&str> {
-        let name = self.table_name.as_str();
-        let mut chars = name.chars();
-        let valid = chars
-            .next()
-            .is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
-            && chars.all(|c| c.is_ascii_alphanumeric() || c == '_');
-
-        ensure!(
-            valid,
-            "invalid metadata table name {name:?}: expected [A-Za-z_][A-Za-z0-9_]*"
-        );
-
-        Ok(name)
+        checked_table_name(&self.table_name)
     }
 }
 

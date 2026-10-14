@@ -64,12 +64,36 @@ mx.migrate_to_latest().await?;
 meta.save(&storage).await?;
 ```
 
+### With PostgreSQL storage
+
+```rust
+use std::sync::Arc;
+
+use migratex::{PgMetadata, PgStorage, connect_to_postgres, Migratex};
+
+// Connect to database
+let pool = connect_to_postgres("postgres://user:pass@localhost:5432/app").await?;
+let storage = PgStorage::new(Arc::new(pool));
+
+// Load or initialize metadata
+let mut meta = PgMetadata::load_or_init(&storage).await?;
+
+// Run migrations
+let mut mx = Migratex::new(&mut ctx, &mut meta, migrations);
+
+mx.migrate_to_latest().await?;
+
+// Save metadata
+meta.save(&storage).await?;
+```
+
 ## Examples
 
 Look at the [examples](https://github.com/nicolab/migratex/tree/main/examples):
 
 - [json example](https://github.com/nicolab/migratex/tree/main/examples/json) - JSON file-based metadata storage
-- [sqlx example](https://github.com/nicolab/migratex/tree/main/examples/sqlx) - SQLite database metadata storage
+- [sqlx-sqlite example](https://github.com/nicolab/migratex/tree/main/examples/sqlx-sqlite) - SQLite database metadata storage
+- [sqlx-postgres example](https://github.com/nicolab/migratex/tree/main/examples/sqlx-postgres) - PostgreSQL database metadata storage
 - [custom example](https://github.com/nicolab/migratex/tree/main/examples/custom) - Custom metadata implementation
 
 ## Usage
@@ -113,7 +137,24 @@ This provides:
 - `SqliteStorage` - Storage configuration
 - `connect_to_sqlite()` - Helper function to connect to SQLite database
 
-> Note: Other database drivers can be implemented by implementing the `Metadata` trait (look at SQLite implementation for inspiration).
+#### PostgreSQL
+
+Enable the `postgres` feature for PostgreSQL database metadata storage:
+
+```toml
+[dependencies]
+migratex = { version = "*", features = ["postgres"] }
+```
+
+This provides:
+
+- `PgMetadata` - Metadata stored in a PostgreSQL table
+- `PgStorage` - Storage configuration
+- `connect_to_postgres()` - Helper function to connect to PostgreSQL database
+
+The `sqlx` and `postgres` features can be enabled together.
+
+> Note: Other database drivers can be implemented by implementing the `Metadata` trait (look at SQLite or PostgreSQL implementation for inspiration).
 
 ## Custom Metadata Storage
 
@@ -154,6 +195,13 @@ Run all tests:
 
 ```sh
 cargo test --all-features
+```
+
+PostgreSQL tests need a server, set by `MIGRATEX_TEST_PG_URL`:
+
+```sh
+docker run --rm -d --name migratex-pg -p 5432:5432 -e POSTGRES_PASSWORD=pg postgres:18
+MIGRATEX_TEST_PG_URL=postgres://postgres:pg@localhost:5432/postgres cargo test --all-features
 ```
 
 ## Notes

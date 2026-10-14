@@ -19,8 +19,8 @@ tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 serde = { version = "1.0", features = ["derive"], optional = true }
 serde_json = {version = "1.0", optional = true}
 
-# Used/compiled only whith sqlx feature
-sqlx = { version = "0.9", features = ["runtime-tokio", "sqlite", "macros"], optional = true}
+# Used/compiled only whith sqlx (SQLite) or postgres feature
+sqlx = { version = "0.9", features = ["runtime-tokio", "macros"], optional = true}
 
 [dev-dependencies]
 thiserror = "2"
@@ -28,7 +28,8 @@ thiserror = "2"
 [features]
 default = []
 json = ["serde", "serde_json"]
-sqlx = ["dep:sqlx"]
+sqlx = ["dep:sqlx", "sqlx/sqlite"]
+postgres = ["dep:sqlx", "sqlx/postgres"]
 
 [[example]]
 name = "custom"
@@ -39,5 +40,9 @@ name = "json"
 required-features = ["json"]
 
 [[example]]
-name = "sqlx"
+name = "sqlx-sqlite"
 required-features = ["sqlx"]
+
+[[example]]
+name = "sqlx-postgres"
+required-features = ["postgres"]

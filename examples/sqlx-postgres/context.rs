@@ -1,0 +1,17 @@
+use std::sync::Arc;
+
+use sqlx::PgPool;
+
+/// Migration context that holds the database connection.
+/// This is passed to each migration and used to execute SQL queries.
+#[derive(Debug, Clone)]
+pub struct MigContext {
+    pub db: Arc<PgPool>,
+}
+
+impl MigContext {
+    /// Create a new migration context with the given connection pool.
+    pub fn new(db: Arc<PgPool>) -> Self {
+        Self { db }
+    }
+}

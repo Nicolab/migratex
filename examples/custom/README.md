@@ -128,4 +128,5 @@ You can edit it and run the example again to see the changes.
 ## See Also
 
 - [json example](../json/) - JSON file-based metadata storage (ready-to-use)
-- [sqlx example](../sqlx/) - Sqlx (SQLite) database metadata storage (ready-to-use)
+- [sqlx-sqlite example](../sqlx-sqlite/) - Sqlx (SQLite) database metadata storage (ready-to-use)
+- [sqlx-postgres example](../sqlx-postgres/) - Sqlx (PostgreSQL) database metadata storage (ready-to-use)

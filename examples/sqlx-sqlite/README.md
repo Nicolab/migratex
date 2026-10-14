@@ -1,4 +1,4 @@
-# SQLx Example
+# SQLx SQLite Example
 
 This example demonstrates how to use Migratex with SQLx and SQLite, storing migration metadata directly in the database.
 
@@ -116,7 +116,7 @@ CREATE TABLE products (
 
 ```bash
 # Run from the migratex directory
-cargo run --example sqlx --features sqlx
+cargo run --example sqlx-sqlite --features sqlx
 ```
 
 ## Inspecting the Database
@@ -181,5 +181,6 @@ migratex = { version = "*", features = ["sqlx"] }
 
 ## See Also
 
+- [sqlx-postgres example](../sqlx-postgres/) - PostgreSQL database metadata storage
 - [json example](../json/) - JSON file-based metadata storage
 - [custom example](../custom/) - Custom metadata implementation

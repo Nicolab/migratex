@@ -58,5 +58,6 @@ migratex = { version = "*", features = ["json"] }
 
 ## See Also
 
-- [sqlx example](../sqlx/) - Sqlx (SQLite) database metadata storage
+- [sqlx-sqlite example](../sqlx-sqlite/) - Sqlx (SQLite) database metadata storage
+- [sqlx-postgres example](../sqlx-postgres/) - Sqlx (PostgreSQL) database metadata storage
 - [custom example](../custom/) - Custom metadata implementation
