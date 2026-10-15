@@ -18,7 +18,7 @@ use crate::{MetaStatus, Metadata, init_meta_datetimes_if_empty, meta_loaded};
 use super::sql_identifier::checked_table_name;
 
 /// Connect to SQLite database.
-#[cfg(feature = "sqlx")]
+#[cfg(feature = "sqlite")]
 pub async fn connect_to_sqlite(db_path: PathBuf) -> Result<SqlitePool> {
     let db_path_name = db_path.display();
     let options = SqliteConnectOptions::new()
@@ -64,14 +64,14 @@ pub async fn connect_to_sqlite(db_path: PathBuf) -> Result<SqlitePool> {
 
 /// Storage configuration for SQLite metadata.
 /// Can be extended with additional fields as needed.
-#[cfg(feature = "sqlx")]
+#[cfg(feature = "sqlite")]
 #[derive(Debug, Clone)]
 pub struct SqliteStorage {
     pub pool: Arc<SqlitePool>,
     pub table_name: String,
 }
 
-#[cfg(feature = "sqlx")]
+#[cfg(feature = "sqlite")]
 impl SqliteStorage {
     /// Create a new SqliteStorage with default table name.
     pub fn new(pool: Arc<SqlitePool>) -> Self {
@@ -127,7 +127,7 @@ impl SqliteStorage {
 ///     Ok(())
 /// }
 /// ```
-#[cfg(feature = "sqlx")]
+#[cfg(feature = "sqlite")]
 #[derive(Debug, Clone)]
 pub struct SqliteMetadata {
     pub version: i32,
@@ -137,7 +137,7 @@ pub struct SqliteMetadata {
     pub updated_at: String,
 }
 
-#[cfg(feature = "sqlx")]
+#[cfg(feature = "sqlite")]
 impl Default for SqliteMetadata {
     fn default() -> Self {
         Self {
@@ -150,7 +150,7 @@ impl Default for SqliteMetadata {
     }
 }
 
-#[cfg(feature = "sqlx")]
+#[cfg(feature = "sqlite")]
 impl SqliteMetadata {
     /// Load metadata from the database, or initialize a new one if it doesn't exist.
     pub async fn load_or_init(storage: &SqliteStorage) -> Result<Self> {
@@ -254,7 +254,7 @@ impl SqliteMetadata {
     }
 }
 
-#[cfg(feature = "sqlx")]
+#[cfg(feature = "sqlite")]
 impl Metadata for SqliteMetadata {
     crate::metadata_accessors!();
 }

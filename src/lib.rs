@@ -28,5 +28,5 @@ pub use metadata::*;
 pub use migratex::*;
 pub use migration::*;
 
-#[cfg(any(feature = "json", feature = "sqlx", feature = "postgres"))]
+#[cfg(any(feature = "json", feature = "sqlite", feature = "postgres"))]
 pub use store::*;

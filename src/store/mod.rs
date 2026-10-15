@@ -8,10 +8,10 @@
 #[cfg(feature = "json")]
 mod json_metadata;
 
-#[cfg(any(feature = "sqlx", feature = "postgres"))]
+#[cfg(any(feature = "sqlite", feature = "postgres"))]
 mod sql_identifier;
 
-#[cfg(feature = "sqlx")]
+#[cfg(feature = "sqlite")]
 mod sqlite_metadata;
 
 #[cfg(feature = "postgres")]
@@ -20,7 +20,7 @@ mod postgres_metadata;
 #[cfg(feature = "json")]
 pub use json_metadata::*;
 
-#[cfg(feature = "sqlx")]
+#[cfg(feature = "sqlite")]
 pub use sqlite_metadata::*;
 
 #[cfg(feature = "postgres")]

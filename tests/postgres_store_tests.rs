@@ -9,7 +9,9 @@
 //
 // Requires a PostgreSQL server, set by `MIGRATEX_TEST_PG_URL`, e.g.:
 //
-//   docker run --rm -d -p 5432:5432 -e POSTGRES_PASSWORD=pg postgres:18
+//   docker run --rm -d --name migratex-pg -p 5432:5432 -e POSTGRES_PASSWORD=pg postgres:18;
+//   # Wait until the server accepts TCP connections (not only the init socket)
+//   until docker exec migratex-pg pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; do sleep 0.5; done;
 //   MIGRATEX_TEST_PG_URL=postgres://postgres:pg@localhost:5432/postgres \
 //     cargo test --features postgres --test postgres_store_tests
 //

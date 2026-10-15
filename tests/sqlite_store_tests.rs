@@ -7,7 +7,7 @@
 
 // -- Tests for SqliteMetadata / SqliteStorage functionality.
 
-#![cfg(feature = "sqlx")]
+#![cfg(feature = "sqlite")]
 
 mod common;
 

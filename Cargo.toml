@@ -1,6 +1,6 @@
 [package]
 name = "migratex"
-version = "1.0.0"
+version = "1.1.0"
 edition = "2024"
 authors = ["Nicolas talle <dev@nicolab.net>"]
 license = "MIT"
@@ -15,11 +15,11 @@ async-trait = "0.1"
 chrono = "0.4"
 okerr = "1"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
-# Used/compiled only whith json feature
+# Used/compiled only with json feature
 serde = { version = "1.0", features = ["derive"], optional = true }
 serde_json = {version = "1.0", optional = true}
 
-# Used/compiled only whith sqlx (SQLite) or postgres feature
+# Used/compiled only with sqlite or postgres feature
 sqlx = { version = "0.9", features = ["runtime-tokio", "macros"], optional = true}
 
 [dev-dependencies]
@@ -28,7 +28,7 @@ thiserror = "2"
 [features]
 default = []
 json = ["serde", "serde_json"]
-sqlx = ["dep:sqlx", "sqlx/sqlite"]
+sqlite = ["dep:sqlx", "sqlx/sqlite"]
 postgres = ["dep:sqlx", "sqlx/postgres"]
 
 [[example]]
@@ -41,7 +41,7 @@ required-features = ["json"]
 
 [[example]]
 name = "sqlx-sqlite"
-required-features = ["sqlx"]
+required-features = ["sqlite"]
 
 [[example]]
 name = "sqlx-postgres"

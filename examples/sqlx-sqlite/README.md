@@ -116,7 +116,7 @@ CREATE TABLE products (
 
 ```bash
 # Run from the migratex directory
-cargo run --example sqlx-sqlite --features sqlx
+cargo run --example sqlx-sqlite --features sqlite
 ```
 
 ## Inspecting the Database
@@ -172,11 +172,11 @@ This allows migrations to access the database for creating tables and executing 
 
 ## Features
 
-Enable the `sqlx` feature to use SQLite metadata storage:
+Enable the `sqlite` feature to use SQLite metadata storage:
 
 ```toml
 [dependencies]
-migratex = { version = "*", features = ["sqlx"] }
+migratex = { version = "*", features = ["sqlite"] }
 ```
 
 ## See Also

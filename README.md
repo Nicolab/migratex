@@ -120,13 +120,13 @@ migratex = { version = "*", features = ["json"] }
 
 This provides the `JsonMetadata` struct for storing metadata in a JSON file.
 
-#### SQLx
+#### SQLite
 
-Enable the `sqlx` feature for SQLite database metadata storage:
+Enable the `sqlite` feature for SQLite database metadata storage:
 
 ```toml
 [dependencies]
-migratex = { version = "*", features = ["sqlx"] }
+migratex = { version = "*", features = ["sqlite"] }
 ```
 
 > Put the latest version of `migratex` in your `Cargo.toml`!
@@ -152,7 +152,7 @@ This provides:
 - `PgStorage` - Storage configuration
 - `connect_to_postgres()` - Helper function to connect to PostgreSQL database
 
-The `sqlx` and `postgres` features can be enabled together.
+The `sqlite` and `postgres` features can be enabled together.
 
 > Note: Other database drivers can be implemented by implementing the `Metadata` trait (look at SQLite or PostgreSQL implementation for inspiration).
 
